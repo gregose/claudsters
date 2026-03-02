@@ -51,6 +51,8 @@ target_volume_liters = 5.5;
 
 // --- Wall thickness ---
 wall = 10;                // PETG wall thickness (mm)
+cavity_floor_taper = 5;   // Extra wall inset at cavity floor (mm) — tapers to 0
+                          // over this distance to soften solid→hollow FDM transition
 
 // --- Baffle (front face) dimensions ---
 baffle_width = 180;       // External width at front (mm)
@@ -297,6 +299,15 @@ module outer_shape() {
     }
 }
 
+// Extra inset near the cavity floor to soften the solid→hollow FDM transition.
+// At z=wall the cavity is fully inset (wall thickness doubles); by z=wall+taper
+// the extra inset is zero and normal wall thickness resumes.
+// Linear taper: max inset at z=wall, zero at z=wall+cavity_floor_taper.
+function cavity_floor_inset_at(z) =
+    (cavity_floor_taper > 0 && z < wall + cavity_floor_taper) ?
+        wall * (1 - (z - wall) / cavity_floor_taper)
+    : 0;
+
 // Inner cavity cross-section (inset by wall thickness)
 // Also applies roundover profile so wall thickness stays uniform
 module inner_cross_section_at(z) {
@@ -308,8 +319,9 @@ module inner_cross_section_at(z) {
     r_outer = baffle_corner_r * (1 - t_curved) + back_corner_r * t_curved;
     
     ri = roundover_inset_at(z);
-    w = w_outer - 2 * wall - 2 * ri;
-    h = h_outer - 2 * wall - 2 * ri;
+    fi = cavity_floor_inset_at(z);
+    w = w_outer - 2 * wall - 2 * ri - 2 * fi;
+    h = h_outer - 2 * wall - 2 * ri - 2 * fi;
     r = max(1, r_outer - wall);
     r_safe = min(r, max(0.1, w/2 - 0.1), max(0.1, h/2 - 0.1));
     

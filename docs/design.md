@@ -21,6 +21,14 @@ Reduces diffraction effects above ~2737 Hz. The original MDF box had sharp baffl
 
 Printable without supports: the back half prints back-face-down, so the chamfer is at the bed and the outer wall grows outward from it. The chamfer inset is combined with the front roundover inset in `cross_section_at(z)`, keeping the logic unified. Does not affect internal dimensions — the inner cavity stops at `z = enclosure_depth - wall` (195mm), well before the chamfer zone.
 
+## Inner Cavity Floor Taper
+
+Extra wall inset near the cavity floor (`cavity_floor_taper = 5`) that gradually opens the cavity over 5mm. At z=wall (10mm), the inner cross-section has an additional 10mm inset per side (effectively doubling wall thickness to ~32mm). This linearly tapers to zero by z=15mm, where normal wall thickness resumes.
+
+**Problem:** Without the taper, the print transitions from fully solid to hollow in a single layer at z=10mm — a 63% drop in material per layer. The sudden pressure/thermal change causes a visible ridge on the outer wall.
+
+**Solution:** `cavity_floor_inset_at(z)` adds a linear extra inset to `inner_cross_section_at()`, spreading the solid→hollow transition across ~25 layers (at 0.2mm). Volume impact is ~0.02L (0.3%) — negligible.
+
 ## Port System
 
 **Port dimensions:** 34.925mm diameter × 114.3mm long (Carmody spec: 1.375" × 4.5"), tuned to ~55 Hz.
