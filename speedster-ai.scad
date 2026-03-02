@@ -41,8 +41,8 @@ print_m3_heatset_dia  = 4.7;   // A2: M3 heat-set insert bore diameter (X/Y plan
 print_m3_heatset_z    = 4.5;   // B1: M3 heat-set insert bore diameter (horizontal/Z axis)
 print_counterbore_dia = 8.0;   // A5: bolt head counterbore diameter
 print_bolt_dia        = 4.5;   // A5: M4 bolt through-hole diameter (scales with counterbore)
-print_bp_hole_dia     = 11.7;  // A4: binding post panel hole diameter
-print_bp_keyway_w     = 2.7;   // A4: binding post keyway slot width
+print_bp_hole_dia     = 11.6;  // A4: binding post panel hole diameter
+print_bp_keyway_w     = 2.6;   // A4: binding post keyway slot width
 print_groove_w        = 3.4;   // C2: groove channel width (fits 3mm seal cord + tongue)
 print_interlock_clr   = 0.2;   // C3: interlock clearance per side
 
@@ -128,14 +128,14 @@ tweeter_recess_depth = 4.0;       // Faceplate thickness / flush recess (mm)
 tweeter_ribbon_w = 24;            // Ribbon opening width (mm)  
 tweeter_ribbon_h = 46;            // Ribbon opening height (mm)
 tweeter_screw_spacing = 60.8;     // Square screw pattern spacing (mm)
-tweeter_screw_dia = 3.5;          // Driver faceplate hole diameter (mm) - passes M3
+tweeter_screw_dia = 4.5;          // Driver faceplate hole diameter (mm) - passes M4
 tweeter_screw_count = 4;          // 4 screws in square pattern
 tweeter_rear_width = 55;          // Rear body width (mm)
 tweeter_mount_depth = 70;         // Total depth behind baffle (66 + 4mm faceplate)
 tweeter_y_offset = 55;            // Above center
-// M3 heat-set inserts for tweeter mounting
-tweeter_insert_dia = print_m3_heatset_dia;  // M3 heat-set insert hole diameter
-tweeter_insert_depth = 6;         // Insert pocket depth (mm) — extra depth to avoid bottoming out
+// M4 heat-set inserts for tweeter mounting
+tweeter_insert_dia = print_m4_heatset_dia;  // M4 heat-set insert hole diameter
+tweeter_insert_depth = 6;         // Insert pocket depth (mm) — flush with inner cavity wall
 
 // --- Assembly hardware ---
 bolt_dia = print_bolt_dia;  // M4 through-hole diameter
@@ -456,15 +456,17 @@ module tweeter_cutout() {
 // A bell-shaped cone at the entry end provides material for the entry flare.
 module port_tube_solid() {
     port_start_z = enclosure_depth - wall - port_length;
+    // Offset by 0.01mm to avoid coplanar face with split plane (port_start_z == split_z)
+    ps = port_start_z + 0.01;
     
     // Main straight tube — extended 1mm past inner back wall
-    translate([port_x_offset, port_y_offset, port_start_z])
+    translate([port_x_offset, port_y_offset, ps])
         cylinder(d = port_diameter + 2*port_wall_thick, 
-                 h = port_length + 1);
+                 h = port_length + 1 - 0.01);
     
     // Entry flare bell: cone from flare mouth diameter to tube diameter
     if (port_entry_flare_r > 0) {
-        translate([port_x_offset, port_y_offset, port_start_z])
+        translate([port_x_offset, port_y_offset, ps])
             cylinder(d1 = port_diameter + 2*port_entry_flare_r + 2*port_wall_thick,
                      d2 = port_diameter + 2*port_wall_thick,
                      h = port_entry_flare_r);

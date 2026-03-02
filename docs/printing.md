@@ -87,7 +87,7 @@ After updating, re-export the enclosure STLs:
 2. Clean up supports from driver cutouts and counterbores
 3. Install M4 heat-set inserts into front half pillars (8× for enclosure bolts)
 4. Install M4 heat-set inserts into woofer screw holes (4× from front face)
-5. Install M3 heat-set inserts into tweeter recess floor (4× from recess)
+5. Install M4 heat-set inserts into tweeter recess floor (4× from recess)
 6. Install M3 heat-set inserts into crossover boss holes (6× per side wall, from cavity)
 7. Mount HP crossover board on left wall, LP board on right wall, with M3 standoff screws
 8. Run speaker wire from back to front through split plane
@@ -95,7 +95,7 @@ After updating, re-export the enclosure STLs:
 10. Add polyfill loosely to cavity
 11. Align tongue into groove and interlock bosses into recesses, mate halves
 12. Insert 8× M4 bolts from back into front pillar inserts
-13. Mount tweeter (flush into recess) with M3 screws
+13. Mount tweeter (flush into recess) with M4 screws
 14. Mount woofer (surface mount) with M4 screws
 15. Connect drivers to crossover
 16. Install binding post plate on rear
@@ -117,8 +117,8 @@ After updating, re-export the enclosure STLs:
 ### Tweeter Mounting
 | Qty | Item | Spec |
 |-----|------|------|
-| 4 | M3 heat-set inserts | Ø4.7mm × 5mm deep |
-| 4 | M3 socket head cap screws | 8mm length |
+| 4 | M4 heat-set inserts | Ø5.7mm × 6mm deep |
+| 4 | M4 socket head cap screws | 8mm length |
 
 ### Crossover Mounting
 | Qty | Item | Spec |
