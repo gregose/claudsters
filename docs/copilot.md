@@ -316,6 +316,10 @@ speedster-ai/
 
 **Render pipeline speedup:** Switched `render.sh` from `--preview` (software OpenGL via xvfb) to `--render --backend=Manifold`. Total render time dropped from ~4 minutes to ~9 seconds (25× faster). Removed xvfb dependency.
 
+### Session 21: Tolerance Fixes, Seal Redesign, Hardware Updates, Cavity Floor Taper
+
+**Inner cavity floor taper:** Added `cavity_floor_taper = 5` parameter with `cavity_floor_inset_at(z)` function. Adds extra wall inset (10mm at z=wall, tapering to 0 at z=15mm) to eliminate a visible ridge on the outer wall caused by an abrupt 63% material-per-layer drop at z=10mm. Volume impact: ~0.02L (0.3%). First attempt used `scale()` on cross-sections which created hull pyramids covering driver cutouts — reverted in favor of the inset approach which only narrows the cavity opening.
+
 ## Open Items / Future Work
 
 - Prototype print and fit check (tolerance test print first, then full enclosure)

@@ -16,11 +16,12 @@ Note: The SCAD Simpson's rule uses 3 sample points (front, mid, back) which over
 
 Breakdown:
 - Gross cavity volume: **5.86 L** (verified via STL export; SCAD 3-point estimate reports 5.94L)
+- Cavity floor taper displacement: ~-0.02 L (5mm extra wall inset at cavity floor)
 - Port tube + entry bell displacement: -0.16 L (tube: 39.925mm OD × 114.3mm, bell: truncated cone 70→40mm OD × 15mm)
 - Pillar displacement: -0.02 L (estimated, 8 front + 8 back pillars)
-- **Net air volume: 5.68 L** (port and pillars subtracted)
+- **Net air volume: ~5.66 L** (port, pillars, and cavity taper subtracted)
 - Internal crossover displacement: -0.33 L (10 components across 2 PCBs + PCB boards + mounting bosses)
-- **Effective air volume: ~5.35 L** (2.7% below 5.5L target — within acoustic tolerance)
+- **Effective air volume: ~5.33 L** (3.1% below 5.5L target — within acoustic tolerance)
 
 The crossover volume displacement (0.33L) is a consequence of mounting the crossover internally on PCBs rather than externally as in Carmody's original MDF design. This shifts port tuning up ~1Hz — negligible in practice, especially considering poly-fill damping material will further modify the effective volume.
 
