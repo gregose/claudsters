@@ -5,6 +5,7 @@ A 3D-printable [OpenSCAD](https://openscad.org/) enclosure for Paul Carmody's [S
 | | |
 |---|---|
 | ![3/4 Front](renders/three_quarter_front.png) | ![3/4 Back](renders/three_quarter_back.png) |
+| ![Front](renders/front.png) | ![Back](renders/back.png) |
 
 ## Why This Project
 
@@ -17,6 +18,10 @@ A 3D-printable [OpenSCAD](https://openscad.org/) enclosure for Paul Carmody's [S
 | Exploded Front | Exploded Back |
 |----------------|---------------|
 | ![Exploded Front](renders/exploded_front.png) | ![Exploded Back](renders/exploded_back.png) |
+
+| Side | Top |
+|------|-----|
+| ![Side](renders/side.png) | ![Top](renders/top.png) |
 
 ## Specifications
 
@@ -55,7 +60,8 @@ Designed for the Bambu Lab H2D but any printer with at least a **180 × 264 × 1
 ## Quick Start
 
 ```bash
-./render.sh          # Generate PNG renders
+./render.sh          # Generate PNG renders (Blender Cycles, photorealistic)
+./render.sh --fast   # Generate PNG renders (OpenSCAD, faster)
 ./export.sh          # Export print-ready STLs
 ./validate.sh        # Run full validation suite (41 checks)
 ```
@@ -80,7 +86,7 @@ speedster-ai/
 ├── component-envelopes.scad  # Component clearance envelopes + validation assertions
 ├── tolerance-test.scad       # Printer tolerance calibration print
 ├── export.sh                 # STL export pipeline
-├── render.sh                 # Render pipeline (9 PNG views)
+├── render.sh                 # Render pipeline (10 PNG views, Blender or --fast OpenSCAD)
 ├── validate.sh               # Validation pipeline (assertions + collision checks)
 ├── validate.py               # Geometric collision detection (trimesh + manifold3d)
 ├── copilot.sh                # Launch Copilot CLI in the devcontainer

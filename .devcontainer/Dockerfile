@@ -5,7 +5,7 @@ FROM mcr.microsoft.com/devcontainers/base:ubuntu-24.04
 # https://files.openscad.org/snapshots/
 ARG OPENSCAD_SNAPSHOT=OpenSCAD-2026.02.04-x86_64.AppImage
 
-# System dependencies (including OpenSCAD runtime libraries)
+# System dependencies (including OpenSCAD runtime libraries and Blender)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     xvfb \
     squashfs-tools \
@@ -21,6 +21,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libfontconfig1 \
     libxkbcommon0 \
     libdbus-1-3 \
+    blender \
     && rm -rf /var/lib/apt/lists/*
 
 # Install OpenSCAD from AppImage snapshot.
