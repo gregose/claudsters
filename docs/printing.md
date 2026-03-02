@@ -105,19 +105,19 @@ After updating, re-export the enclosure STLs:
 ### Enclosure Assembly
 | Qty | Item | Spec |
 |-----|------|------|
-| 8 | M4 heat-set inserts | Ø5.6mm × 8mm deep |
-| 8 | M4 socket head cap screws | ~65mm length |
+| 8 | M4 heat-set inserts | Ø5.7mm × 8mm deep |
+| 8 | M4 socket head cap screws | 60mm length |
 
 ### Woofer Mounting
 | Qty | Item | Spec |
 |-----|------|------|
-| 4 | M4 heat-set inserts | Ø5.6mm × 6mm deep |
+| 4 | M4 heat-set inserts | Ø5.7mm × 6mm deep |
 | 4 | M4 socket head cap screws | 10mm length |
 
 ### Tweeter Mounting
 | Qty | Item | Spec |
 |-----|------|------|
-| 4 | M3 heat-set inserts | Ø4.5mm × 5mm deep |
+| 4 | M3 heat-set inserts | Ø4.7mm × 5mm deep |
 | 4 | M3 socket head cap screws | 8mm length |
 
 ### Crossover Mounting
@@ -129,14 +129,13 @@ After updating, re-export the enclosure STLs:
 ### Seal
 | Qty | Item | Spec |
 |-----|------|------|
-| 1 | Closed-cell foam tape | ~3mm wide, enough for perimeter |
-| — | *OR* TPU filament bead | Laid into groove before mating |
+| 1 | Round rubber seal cord | 3mm diameter, enough for perimeter (~700mm) |
 
 ### Binding Post Plate
 | Qty | Item | Spec |
 |-----|------|------|
 | 1 | Binding post plate | Dayton Audio SBPP-SI, 100.6mm square |
-| 4 | M4 heat-set inserts | Ø5.6mm × 6mm deep |
+| 4 | M4 heat-set inserts | Ø5.7mm × 6mm deep |
 | 4 | M4 flat head (countersunk) cap screws | 8mm length, 90° head |
 
 ### Drivers & Crossover

@@ -36,15 +36,15 @@ include <component-envelopes.scad>
 // Set these to the best-fit values from your tolerance-test.scad print.
 // Defaults are the design nominals. After printing the tolerance test,
 // replace each value with the number printed on the variant that fits best.
-print_m4_heatset_dia  = 5.6;   // A1: M4 heat-set insert bore diameter
-print_m3_heatset_dia  = 4.5;   // A2: M3 heat-set insert bore diameter (X/Y plane)
+print_m4_heatset_dia  = 5.7;   // A1: M4 heat-set insert bore diameter
+print_m3_heatset_dia  = 4.7;   // A2: M3 heat-set insert bore diameter (X/Y plane)
 print_m3_heatset_z    = 4.5;   // B1: M3 heat-set insert bore diameter (horizontal/Z axis)
 print_counterbore_dia = 8.0;   // A5: bolt head counterbore diameter
 print_bolt_dia        = 4.5;   // A5: M4 bolt through-hole diameter (scales with counterbore)
 print_bp_hole_dia     = 11.7;  // A4: binding post panel hole diameter
 print_bp_keyway_w     = 2.7;   // A4: binding post keyway slot width
-print_groove_w        = 3.6;   // C2: groove channel width
-print_interlock_clr   = 0.3;   // C3: interlock clearance per side
+print_groove_w        = 3.4;   // C2: groove channel width (fits 3mm seal cord + tongue)
+print_interlock_clr   = 0.2;   // C3: interlock clearance per side
 
 // --- Target ---
 target_volume_liters = 5.5;
@@ -140,17 +140,18 @@ tweeter_insert_depth = 6;         // Insert pocket depth (mm) — extra depth to
 // --- Assembly hardware ---
 bolt_dia = print_bolt_dia;  // M4 through-hole diameter
 insert_dia = print_m4_heatset_dia;  // M4 heat-set insert hole
-insert_depth = 8;          // Insert pocket depth
+insert_depth = 12;         // Insert pocket depth (pillar bolts, extra clearance for M4×70 bolt)
 bolt_landing_dia = print_counterbore_dia;  // Counterbore/landing diameter for bolt head
 bolt_inset = 12;           // Distance from edge to bolt center
 
 // --- Tongue-and-groove seal joint ---
 // Tongue on front half, groove in back half
-// Self-aligning + sealing with foam tape or TPU in groove
+// Self-aligning + sealing with 3mm round rubber cord in groove
 tongue_width = 3;          // Width of tongue ridge (mm)
 tongue_height = 4;         // Tongue protrusion past split face (mm)
 tongue_clearance = (print_groove_w - tongue_width) / 2;  // Derived from groove width
-seal_depth = 1;            // Extra groove depth below tongue for foam/TPU (mm)
+seal_dia = 3;              // Rubber seal cord diameter (mm)
+seal_depth = 2.8;          // Groove depth below tongue tip for seal (mm)
 tongue_inset = 5;          // From outer wall to tongue center (mm)
 
 // --- Direct-mount binding posts (Dayton Audio BPP-SNB) ---
@@ -160,7 +161,7 @@ tongue_inset = 5;          // From outer wall to tongue center (mm)
 bp_hole_dia = print_bp_hole_dia;     // Panel hole diameter (mm)
 bp_spacing = 30;                 // Post center-to-center spacing (mm)
 bp_keyway_width = print_bp_keyway_w;  // Anti-rotation slot width (mm)
-bp_keyway_total = 14.2;          // From hole top to keyway bottom (mm) — 14 + 0.2 tolerance
+bp_keyway_total = 14.5;          // From hole top to keyway bottom (mm) — 2.8mm extension past hole edge
 bp_y_offset = -45;               // Vertical position on back face (same as old terminal)
 bp_intrusion = 34;               // Internal protrusion past wall (25mm shaft + 9mm lug)
 
@@ -813,7 +814,7 @@ module tongue() {
 
 // Groove: channel cut into the back half's split face
 // Wider than tongue by 2x clearance, deeper by seal_depth
-// Foam tape or TPU bead sits in the bottom of the groove
+// 3mm rubber seal cord sits in the bottom of the groove
 module groove() {
     groove_width = tongue_width + 2 * tongue_clearance;
     groove_depth = tongue_height + seal_depth;

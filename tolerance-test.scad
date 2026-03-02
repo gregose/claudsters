@@ -45,7 +45,7 @@ nom_m4_heatset    = print_m4_heatset_dia;
 nom_m3_heatset    = print_m3_heatset_dia;
 nom_bp_hole       = print_bp_hole_dia;
 nom_bp_keyway_w   = print_bp_keyway_w;
-nom_bp_keyway_ext = bp_keyway_total - print_bp_hole_dia/2;  // derived from enclosure params
+nom_bp_keyway_ext = bp_keyway_total - print_bp_hole_dia;  // slot_ext past circle edge (matches enclosure)
 nom_counterbore   = print_counterbore_dia;
 nom_bolt_through  = print_bolt_dia;
 nom_m3_horiz      = print_m3_heatset_z;
@@ -160,6 +160,7 @@ module bar_m3_heatset() {
 // ========================
 // Counterbore opens at z=0 (bed). At z=depth_counterbore the bore
 // narrows to bolt diameter — tests the landing shelf overhang.
+// Both counterbore and through-hole diameters vary by the same offset.
 module bar_counterbore() {
     cell = cell_size(nom_counterbore);
     w = num_steps * cell;
@@ -170,16 +171,24 @@ module bar_counterbore() {
         cube([w, d, h]);
         for (i = [0:num_steps-1]) {
             cx = i * cell + cell/2;
+            offset_i = (i - half_steps) * step_size;
             translate([cx, d/2, -0.1])
                 cylinder(d=step_val(nom_counterbore, i),
                          h=depth_counterbore + 0.1);
             translate([cx, d/2, depth_counterbore - 0.01])
-                cylinder(d=nom_bolt_through, h=h - depth_counterbore + 0.1);
+                cylinder(d=nom_bolt_through + offset_i,
+                         h=h - depth_counterbore + 0.1);
         }
         engrave_front("A5: M4 cbore", w/2, h/2, size=2.5);
-        for (i = [0:num_steps-1])
+        for (i = [0:num_steps-1]) {
+            offset_i = (i - half_steps) * step_size;
+            // Counterbore diameter on back face
             engrave_back(label_str(nom_counterbore, i),
-                         i * cell + cell/2, h/2, d, size=2.5);
+                         i * cell + cell/2, h/2 + 1.5, d, size=2.5);
+            // Through-hole diameter on back face (below counterbore label)
+            engrave_back(str("t", nom_bolt_through + offset_i),
+                         i * cell + cell/2, h/2 - 1.5, d, size=2.0);
+        }
     }
 }
 
@@ -188,20 +197,19 @@ module bar_counterbore() {
 // ========================
 module bar_binding_post() {
     d_max = max_dia(nom_bp_hole);
-    kw_ext_max = nom_bp_keyway_ext + (d_max - nom_bp_hole)/2;
     cell_x = d_max + 2*hole_wall;
-    cell_y = d_max + kw_ext_max + 2*hole_wall;
+    cell_y = d_max + nom_bp_keyway_ext + 2*hole_wall;
     w = num_steps * cell_x;
     d = cell_y;
     h = depth_bp;
-    hole_cy = hole_wall + kw_ext_max + d_max/2;
+    hole_cy = hole_wall + nom_bp_keyway_ext + d_max/2;
 
     difference() {
         cube([w, d, h]);
         for (i = [0:num_steps-1]) {
             dia = step_val(nom_bp_hole, i);
             kw = step_val(nom_bp_keyway_w, i);
-            kw_ext = nom_bp_keyway_ext + (dia - nom_bp_hole)/2;
+            kw_ext = nom_bp_keyway_ext;  // fixed: bp_keyway_total - nom_bp_hole (not diameter-dependent)
             cx = i * cell_x + cell_x/2;
             translate([cx, hole_cy, -0.1])
                 linear_extrude(height = h + 0.2) {
@@ -211,9 +219,14 @@ module bar_binding_post() {
                 }
         }
         engrave_front("A4: bind post", w/2, h/2, size=2.5);
-        for (i = [0:num_steps-1])
+        for (i = [0:num_steps-1]) {
+            // Hole diameter on back face (top line)
             engrave_back(label_str(nom_bp_hole, i),
-                         i * cell_x + cell_x/2, h/2, d, size=2.5);
+                         i * cell_x + cell_x/2, h/2 + 1.5, d, size=2.5);
+            // Keyway width on back face (bottom line)
+            engrave_back(str("k", step_val(nom_bp_keyway_w, i)),
+                         i * cell_x + cell_x/2, h/2 - 1.5, d, size=2.0);
+        }
     }
 }
 
@@ -304,7 +317,52 @@ module piece_grooves() {
 }
 
 // ========================
-// C3: Interlock boss (mating part) + recess strip
+// C4: Seal depth strip (7 groove depths, fixed 3.4mm width)
+// ========================
+// Tests seal compression with the rubber cord. Tongue piece (C1) mates
+// with each groove variant. Groove width is locked at nom_groove_w;
+// only the seal_depth (space below tongue) varies.
+nom_seal_depth = seal_depth;  // center value from enclosure
+
+module piece_seal_depths() {
+    gap = 2;
+    base_h = 2;
+    fixed_gw = nom_groove_w;  // locked groove width (3.4mm nominal)
+    top_z = tg_base_h + nom_tongue_h + 2;
+    total_w = num_steps * (tg_block_w + gap) - gap;
+
+    difference() {
+        union() {
+            // Connecting base
+            cube([total_w, tg_strip_len, base_h]);
+
+            for (i = [0:num_steps-1]) {
+                sd = step_val(nom_seal_depth, i);
+                gd = nom_tongue_h + sd;  // total groove depth = tongue + seal
+                tx = i * (tg_block_w + gap);
+
+                difference() {
+                    translate([tx, 0, 0])
+                        cube([tg_block_w, tg_strip_len, top_z]);
+                    // Groove channel: fixed width, varying depth
+                    translate([tx + (tg_block_w - fixed_gw)/2, -0.1, top_z - gd])
+                        cube([fixed_gw, tg_strip_len + 0.2, gd + 0.1]);
+                }
+            }
+        }
+        // Seal depth labels on front face
+        for (i = [0:num_steps-1])
+            engrave_front(label_str(nom_seal_depth, i),
+                         i * (tg_block_w + gap) + tg_block_w/2,
+                         (top_z - nom_tongue_h - nom_seal_depth)/2, size=2.5);
+        // Group label on back face
+        engrave_back("C4: seal depth", total_w/2,
+                    (top_z - nom_tongue_h - nom_seal_depth)/2,
+                    tg_strip_len, size=2.5);
+    }
+}
+
+
 // ========================
 interlock_h = 2;  // Boss/recess height (matches real interlock)
 interlock_steps = 4;  // Clearance variants: 0.1, 0.2, 0.3, 0.4mm/side
@@ -370,8 +428,7 @@ _fd_a2_d = cell_size(nom_m3_heatset);
 _fd_a5_d = cell_size(nom_counterbore);
 _fd_total = _fd_a1_d + bar_gap + _fd_a2_d + bar_gap + _fd_a5_d;
 
-_th_a4_d = max_dia(nom_bp_hole) + nom_bp_keyway_ext +
-           (max_dia(nom_bp_hole) - nom_bp_hole)/2 + 2*hole_wall;
+_th_a4_d = max_dia(nom_bp_hole) + nom_bp_keyway_ext + 2*hole_wall;
 _th_total = _th_a4_d;
 
 _hz_d = depth_m3_insert + 4;
@@ -400,6 +457,10 @@ module plate_mating() {
     piece_tongue();
     translate([tg_block_w + 8, 0, 0])
         piece_grooves();
+    // Seal depth strip below groove strip (share the same tongue piece)
+    groove_strip_w = num_steps * (tg_block_w + 2) - 2;
+    translate([tg_block_w + 8 + groove_strip_w + 8, 0, 0])
+        piece_seal_depths();
 
     il_bs = nom_interlock_dia + 2*hole_wall;
     translate([0, _mt_tg + 8, 0])
@@ -478,7 +539,9 @@ translate([0, _y4, 0]) plate_mating();
 //   A2 (M3 heatset, 4.2-4.8mm):
 //     Same test with M3 heat-set inserts. Used for tweeter mounting.
 //
-//   A5 (M4 counterbore, 7.7-8.3mm):
+//   A5 (M4 counterbore, 7.7-8.3mm cbore / 4.2-4.8mm through-hole):
+//     Both the counterbore and through-hole diameters vary by the
+//     same offset. The back label shows cbore dia + "t" through-hole dia.
 //     Drop an M4 bolt head-first into each counterbore. The head
 //     should seat flat on the landing shelf with minimal play.
 //     Thread the bolt shank through the narrow hole above — it
