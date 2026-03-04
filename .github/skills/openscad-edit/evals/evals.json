@@ -1,0 +1,38 @@
+{
+  "skill_name": "openscad-edit",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I want to increase the enclosure depth by 10mm to give more room behind the crossover boards. Can you make that change?",
+      "expected_output": "Agent should modify enclosure_depth from 205 to 215mm, note that split_z will auto-adjust, predict volume change (~+0.33L), suggest reducing height to compensate, and warn about cascading effects on crossover z-range and bolt counterbore landing. Should NOT modify split_z directly.",
+      "assertions": [
+        {"name": "modifies_enclosure_depth", "type": "file_contains", "description": "Changes enclosure_depth parameter to 215"},
+        {"name": "does_not_hardcode_split_z", "type": "negative_check", "description": "Does not manually set split_z to a fixed value"},
+        {"name": "discusses_volume_impact", "type": "content_check", "description": "Mentions volume increase and suggests height adjustment"},
+        {"name": "runs_validation", "type": "action_check", "description": "Runs validate.sh after the change"},
+        {"name": "runs_export", "type": "action_check", "description": "Runs export.sh to regenerate STLs"}
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "The roundover is too aggressive, I want to reduce it from 20mm to 15mm. Make sure it's still printable.",
+      "expected_output": "Agent should change baffle_roundover to 15mm, adjust roundover_depth to maintain ratio >= 1.0 (e.g., 25mm giving ratio 1.67), verify woofer flange still fits on flat face (180-2*15=150mm > 125.8mm), and note the diffraction threshold shifts up to ~3653 Hz.",
+      "assertions": [
+        {"name": "changes_roundover", "type": "file_contains", "description": "Sets baffle_roundover to 15"},
+        {"name": "adjusts_depth_ratio", "type": "content_check", "description": "Adjusts roundover_depth to maintain ratio >= 1.0"},
+        {"name": "checks_printability", "type": "content_check", "description": "Verifies max overhang stays <= 45 degrees"},
+        {"name": "checks_flange_fit", "type": "content_check", "description": "Verifies woofer flange fits on new flat face"}
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I want to add a new internal rib across the back wall at z=150 to stiffen the back panel. How should I implement this?",
+      "expected_output": "Agent should create a new module for the rib, use intersection(inner_cavity(), rib) to clip it to the cavity (or explain why not if coplanar risks exist), position it at z=150 which is well within the cavity, and add it to the full_enclosure union in the back half section. Should warn about potential interference with crossover bosses or port tube at that z position.",
+      "assertions": [
+        {"name": "uses_intersection_pattern", "type": "content_check", "description": "Uses intersection with inner_cavity or explains coplanar avoidance"},
+        {"name": "checks_component_interference", "type": "content_check", "description": "Checks for interference with crossover bosses or port at z=150"},
+        {"name": "adds_to_correct_half", "type": "content_check", "description": "Adds rib to back half since z=150 > split_z=80.7"}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "skill_name": "design-docs",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I just increased the enclosure depth from 205mm to 215mm and reduced the height from 264mm to 255mm to compensate volume. Update all the docs and commit.",
+      "expected_output": "Agent should update claude.md (new session entry, locked params table), README.md (specs table), and analysis.md (volume, port tuning, dimensional verification). Then explain changes and git commit with proper message.",
+      "assertions": [
+        {"name": "updates_claude_md", "type": "file_edit", "description": "Adds new session entry and updates locked params in claude.md"},
+        {"name": "updates_readme", "type": "file_edit", "description": "Updates specs table in README.md"},
+        {"name": "updates_analysis", "type": "file_edit", "description": "Updates volume and clearance numbers in analysis.md"},
+        {"name": "explains_before_commit", "type": "action_check", "description": "Explains changes to user before committing"},
+        {"name": "proper_commit_message", "type": "content_check", "description": "Uses conventional commit format with Co-authored-by trailer"}
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I changed the port y_offset from 52 to 58. What docs need updating?",
+      "expected_output": "Agent should identify: claude.md locked params table (port_y_offset), analysis.md §1.6 Port Placement and §3.3 Port Tube clearances. README.md likely doesn't need changes since the specs table doesn't list port_y_offset directly.",
+      "assertions": [
+        {"name": "identifies_claude_sections", "type": "content_check", "description": "Identifies locked params table in claude.md"},
+        {"name": "identifies_analysis_sections", "type": "content_check", "description": "Identifies §1.6 and §3.3 in analysis.md"},
+        {"name": "readme_minimal", "type": "content_check", "description": "Notes README.md needs minimal or no changes for this parameter"}
+      ]
+    }
+  ]
+}

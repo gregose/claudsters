@@ -1,0 +1,26 @@
+{
+  "skill_name": "validate-export",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I just changed the enclosure depth, can you check everything is still OK and get me the updated STLs?",
+      "expected_output": "Agent should run ./validate.sh first (full pipeline including geometric checks), report results, then run ./export.sh to regenerate STLs, and optionally ./render.sh. Should report the volume, any assertion pass/fail, and geometry status from export.",
+      "assertions": [
+        {"name": "runs_validate_first", "type": "action_check", "description": "Runs validate.sh before export.sh"},
+        {"name": "runs_export", "type": "action_check", "description": "Runs export.sh after validation passes"},
+        {"name": "reports_volume", "type": "content_check", "description": "Reports the volume from validation output"},
+        {"name": "reports_pass_fail", "type": "content_check", "description": "Reports assertion and geometric check results"}
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Validation failed with 'FAIL: Woofer flange (125.8mm) exceeds flat baffle width (120mm)'. What's wrong and how do I fix it?",
+      "expected_output": "Agent should explain that the flat baffle face (baffle_width - 2*baffle_roundover) is only 120mm, which is less than the woofer flange diameter. Suggest either reducing baffle_roundover or increasing baffle_width. Calculate specific values that would fix it.",
+      "assertions": [
+        {"name": "explains_flat_face_calc", "type": "content_check", "description": "Explains flat face = baffle_width - 2*roundover"},
+        {"name": "suggests_fix", "type": "content_check", "description": "Suggests reducing roundover or increasing width with specific values"},
+        {"name": "does_not_just_rerun", "type": "negative_check", "description": "Does not just re-run validation without explaining the fix"}
+      ]
+    }
+  ]
+}

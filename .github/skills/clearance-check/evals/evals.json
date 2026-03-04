@@ -1,0 +1,35 @@
+{
+  "skill_name": "clearance-check",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I want to move the port down from y=52 to y=40. Will it clear the crossover inductor L3?",
+      "expected_output": "Agent should compute: port outer radius = 19.96mm, port bottom at y = 40 - 19.96 = 20.04mm. L3 inductor top (from xover_y_top=26 + component position) is approximately at y=29. Gap: 20.04 - 29 = -8.96mm → COLLISION. Should warn this won't work and suggest keeping port at y>=49 for 3mm clearance.",
+      "assertions": [
+        {"name": "detects_collision", "type": "content_check", "description": "Identifies the collision between port and L3 inductor"},
+        {"name": "shows_calculation", "type": "content_check", "description": "Shows the geometric calculation with specific numbers"},
+        {"name": "suggests_safe_value", "type": "content_check", "description": "Suggests a minimum safe port_y_offset value"}
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "What happens to the PCB corner clearance if I increase back_corner_r from 17mm to 30mm?",
+      "expected_output": "Agent should compute the inner wall x-position at the critical PCB bottom-back corner (z=182, y=-100) with the new corner radius. The larger corner radius curves the wall inward more, reducing the available width at that corner. Should identify whether the PCB face position (±49.6mm) still fits within the curved wall.",
+      "assertions": [
+        {"name": "computes_corner_impact", "type": "content_check", "description": "Computes inner wall x at the critical corner with new radius"},
+        {"name": "identifies_risk", "type": "content_check", "description": "Identifies that larger corner radius reduces clearance at PCB corners"},
+        {"name": "references_session_18", "type": "content_check", "description": "References that back_corner_r was reduced from 42 to 17 specifically for this reason"}
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Will a 10mm reduction in baffle_height (264 to 254) cause any problems?",
+      "expected_output": "Agent should check: woofer flange bottom at y=-107.75, new baffle half-height=127mm minus roundover=20mm = flat face half-height=107mm. Woofer flange extends to y=|-45|+62.75=107.75mm which EXCEEDS 107mm → woofer flange won't fit on flat face. Should also note volume decrease and driver-gap impact.",
+      "assertions": [
+        {"name": "detects_woofer_overflow", "type": "content_check", "description": "Identifies woofer flange exceeding the flat baffle face height"},
+        {"name": "shows_calculation", "type": "content_check", "description": "Shows specific dimension calculations"},
+        {"name": "mentions_volume", "type": "content_check", "description": "Notes the volume impact of height reduction"}
+      ]
+    }
+  ]
+}

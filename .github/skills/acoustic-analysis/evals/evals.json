@@ -1,0 +1,25 @@
+{
+  "skill_name": "acoustic-analysis",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "If I increase the enclosure depth by 15mm (205 to 220mm) and keep everything else the same, what happens to the port tuning and volume?",
+      "expected_output": "Agent should calculate: volume increase of ~15 × 0.033 = ~0.5L, new net volume ~6.18L, port tuning shift from ~55Hz down to ~52Hz using f_new = f_old × sqrt(V_old/V_new). Should mention this moves further from Carmody's target and suggest height reduction to compensate.",
+      "assertions": [
+        {"name": "calculates_volume", "type": "content_check", "description": "Estimates volume change quantitatively"},
+        {"name": "calculates_tuning", "type": "content_check", "description": "Computes new port tuning frequency"},
+        {"name": "suggests_compensation", "type": "content_check", "description": "Suggests height reduction or other compensation"}
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "What's the baffle step frequency and how does our roundover help with diffraction?",
+      "expected_output": "Agent should compute: baffle step at 344000/(π×180) ≈ 608 Hz, roundover effective above 344000/(2π×20) ≈ 2737 Hz. Should explain the relationship between baffle step and roundover, note the crossover frequency is typically 3-4kHz, and compare to the original MDF box which had no roundover.",
+      "assertions": [
+        {"name": "correct_baffle_step", "type": "content_check", "description": "Computes baffle step near 608 Hz"},
+        {"name": "correct_diffraction", "type": "content_check", "description": "Computes diffraction threshold near 2737 Hz"},
+        {"name": "contextualizes", "type": "content_check", "description": "Relates to crossover frequency and original design"}
+      ]
+    }
+  ]
+}
